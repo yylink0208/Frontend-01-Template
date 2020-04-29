@@ -1,0 +1,50 @@
+<script>
+    function converStringToNumber(string,x=10){
+        string = string.toLocaleUpperCase()
+        var charts = string.split('')
+        var i = 0
+        var number = 0
+        var reg = /[0-9]/
+        var codeFor0 = '0'.codePointAt()
+
+        // 处理整数部分
+        while(i<charts.length&&charts[i]!=='.'){
+            number = number * x
+            var chart = charts[i]
+
+            if(!reg.test(chart)){
+                addNumber = chart.codePointAt()-codeFor0 - 7
+            }else{
+                addNumber = chart.codePointAt()-codeFor0
+            }
+
+            if(addNumber>=x)return NaN
+
+            number +=addNumber
+            i++
+        }
+
+        //处理小数部分
+        if(charts[i]==='.'){
+            i++
+        }
+
+        var fraction = 1
+
+        while(i<charts.length){
+            var chart = charts[i]
+            fraction /= x
+            if(!reg.test(chart)){
+                addNumber = chart.codePointAt()-codeFor0 - 7
+            }else{
+                addNumber = chart.codePointAt()-codeFor0
+            }
+            number+=addNumber*fraction
+            i++
+        }
+
+        return number
+    }
+    console.log(converStringToNumber('F93.423',16))
+    console.log(converNumberToStirng('3987.258544921875',16))
+</script>

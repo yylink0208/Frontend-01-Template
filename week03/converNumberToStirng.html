@@ -1,0 +1,35 @@
+<script>
+    function converNumberToStirng(number, x = 10) {
+        var integer = Math.floor(number)
+        var integerString = integer === 0 ? '0' : ''
+        var fraction = number % 1
+        var fractionString = '.'
+
+        var codeForA = 'A'.codePointAt()
+        // 处理整数部分
+        while (integer > 0) {
+            var addChart = integer % x
+            if (addChart > 9) {
+                addChart = String.fromCharCode(codeForA + addChart - 10)
+            }
+            integerString = addChart + integerString
+            integer = Math.floor(integer / x)
+        }
+
+        // 处理小数部分 限制一下最多30个字符
+        while (fraction > 0 && fractionString.length < 30) {
+            var temporary = fraction * x
+            var addChart = Math.floor(temporary)
+            if (addChart > 9) {
+                addChart = String.fromCharCode(codeForA + addChart - 10)
+            }
+            fractionString += addChart
+            fraction = temporary % 1
+        }
+
+        return fractionString === '.' ? integerString : integerString + fractionString
+    }
+
+    console.log(converNumberToStirng('4484848333.1848488488', 16))
+    console.log(4484848333.1848488488.toString(16))
+</script>
