@@ -264,7 +264,8 @@ class TrunkedBodyParser {
   })
 
   const res = await request.send()
-  parserHtml.parseHTML(res.body)
+  const dom = parserHtml.parseHTML(res.body)
+  console.log(JSON.stringify(dom, null, '   '))
 })()
 
 // const client = net.createConnection({

@@ -21,7 +21,7 @@ const server = http.createServer((req, res) => {
     <body>
         <div>
             <img id="myid" class="im"/>
-            <img />
+            <img style="height:100px;color:red;background-color: #ff2222;"/>
         </div>
     </body>
     </html>`

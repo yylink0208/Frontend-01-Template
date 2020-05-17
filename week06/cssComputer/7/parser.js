@@ -50,8 +50,8 @@ function computeCSS (element) {
 
       if (matched) {
         // 如果匹配成功则加入规则
-        const sp = sepcificity(rule.selectors[0])
         const computedStyle = element.computedStyle
+        const sp = sepcificity(rule.selectors[0])
         for (const declaration of rule.declarations) {
           if (!computedStyle[declaration.property]) {
             computedStyle[declaration.property] = {}
@@ -68,6 +68,16 @@ function computeCSS (element) {
         }
         // console.log(element.computedStyle)
         break
+      }
+    }
+    const inlienStyle = element.attributes.filter(p => p.name === 'style')[0]
+    if (!inlienStyle) return
+    const inlienDeclarations = css.parse(`*{${inlienStyle.value}}`).stylesheet.rules[0].declarations
+    const sp = [1, 0, 0, 0]
+    for (const declaration of inlienDeclarations) {
+      element.computedStyle[declaration.property] = {
+        value: declaration.value,
+        sp
       }
     }
   }
@@ -135,7 +145,8 @@ function emit (token) {
       }
     }
 
-    element.parent = top
+    const { children, ...topInfo } = top
+    element.parent = topInfo
     computeCSS(element)
 
     top.children.push(element)
@@ -377,15 +388,16 @@ function selfClosingStartTag (c) {
   } else { }
 }
 
-module.exports.parseHTML = async function parseHTML (html) {
+module.exports.parseHTML = function parseHTML (html) {
   let state = data
   for (const c of html) {
-    await new Promise(resolve => {
-      setTimeout(() => resolve(), 0)
-    })
+    // await new Promise(resolve => {
+    //   setTimeout(() => resolve(), 0)
+    // })
     // 不知道为什么不等待一下 信息就打印不全 可能我mac有问题
     state = state(c)
   }
   state = state(EOF)
-  console.log(stack[0])
+  // console.log(stack[0])
+  return stack[0]
 }
