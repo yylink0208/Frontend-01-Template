@@ -1,4 +1,5 @@
 const net = require('net')
+const parserHtml = require('./parser')
 
 class Request {
   // method, url = host + port + path
@@ -167,7 +168,7 @@ class ResponseParser {
 
   get getResponse () {
     this.statusLine.match(/HTTP\/1.1 ([0-9]+) ([\s\S]+)/)
-    console.log(this.bodyParser.content)
+    // console.log(this.bodyParser.content)
     return {
       statusCode: RegExp.$1,
       statusText: RegExp.$2,
@@ -263,7 +264,7 @@ class TrunkedBodyParser {
   })
 
   const res = await request.send()
-  console.log(res)
+  parserHtml.parseHTML(res.body)
 })()
 
 // const client = net.createConnection({
