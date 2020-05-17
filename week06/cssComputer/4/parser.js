@@ -1,4 +1,5 @@
 // 解析标签
+const css = require('css')
 const EOF = Symbol('EOF')
 let currentToken = null
 let currentAttribute = null
@@ -6,7 +7,58 @@ let currentAttribute = null
 const stack = [{ type: 'document', children: [] }]
 let currentTextNode = null
 
-function emit (token) {
+const rules = []
+function addCSSRules(text) {
+  const ast = css.parse(text)
+  rules.push(...ast.stylesheet.rules)
+}
+
+function findParents(element) {
+  const elements = []
+  let el = element
+  while (el.parent) {
+    elements.push(el.parent)
+    el = el.parent
+  }
+  return elements
+
+}
+
+function computeCSS(element) {
+  // const elements = stack.slice().reverse()
+  const elements = findParents(element)
+  if (!element.computedStyle) {
+    element.computedStyle = {}
+  }
+
+  for (let rule of rules) {
+    // 与elements 顺序规则一致
+    const selectorParts = rule.selectors[0].split(' ').reverse()
+
+    if (!match(element, selectorParts[0])) continue
+
+    let matched = false
+
+    let j = 1
+    for (let i = 0; i < elements.length; i++) {
+      if (match(elements[i], selectorParts[j])) {
+        j++
+      }
+
+      if (j >= selectorParts, length) {
+        matched = true
+      }
+
+      if (matched) {
+        console.log('Element', element, 'matched rule', rule)
+      }
+    }
+  }
+}
+
+function match(element,selector) { }
+
+function emit(token) {
   const top = stack[stack.length - 1]
 
   if (token.type === 'startTag') {
@@ -28,8 +80,9 @@ function emit (token) {
     }
 
     element.parent = top
+    computeCSS(element)
+
     top.children.push(element)
-    console.log(element)
     if (!token.isSelfClosing) {
       stack.push(element)
     }
@@ -38,13 +91,18 @@ function emit (token) {
     if (top.tagName !== token.tagName) {
       throw new Error("Tag start end dosen't match!")
     } else {
+      // 遇到style标签时执行添加css规则的操作
+      if (top.tagName === 'style') {
+        addCSSRules(top.children[0].content)
+      }
+
       stack.pop()
     }
     currentTextNode = null
   } else if (token.type === 'text') {
     if (currentTextNode === null) {
       currentTextNode = {
-        type: 'text',
+        type: "text",
         content: ''
       }
       top.children.push(currentTextNode)
@@ -53,7 +111,7 @@ function emit (token) {
   }
 }
 
-function data (c) {
+function data(c) {
   if (c === '<') {
     return tagOpen
   } else if (c === EOF) {
@@ -69,7 +127,7 @@ function data (c) {
   }
 }
 
-function tagOpen (c) {
+function tagOpen(c) {
   if (c === '/') {
     return endTagOpen
   } else if (c.match(/^[a-zA-Z]$/)) {
@@ -86,7 +144,7 @@ function tagOpen (c) {
   }
 }
 
-function endTagOpen (c) {
+function endTagOpen(c) {
   if (c.match(/^[a-zA-Z]$/)) {
     currentToken = {
       type: 'endTag',
@@ -100,7 +158,7 @@ function endTagOpen (c) {
   } else { }
 }
 
-function tagName (c) {
+function tagName(c) {
   if (c.match(/^[\t\n\f ]$/)) {
     return beforeAttributeName
   } else if (c === '/') {
@@ -116,7 +174,7 @@ function tagName (c) {
   }
 }
 
-function beforeAttributeName (c) {
+function beforeAttributeName(c) {
   if (c.match(/^[\t\n\f ]$/)) {
     return beforeAttributeName
   } else if (c === '/' || c === '>' || c === EOF) {
@@ -132,7 +190,7 @@ function beforeAttributeName (c) {
   }
 }
 
-function afterAttributeName (c) {
+function afterAttributeName(c) {
   if (c === '/') {
     if (currentAttribute) {
       currentToken[currentAttribute.name] = currentAttribute.value
@@ -149,7 +207,7 @@ function afterAttributeName (c) {
   }
 }
 
-function attributeName (c) {
+function attributeName(c) {
   if (c.match(/^[\t\n\f ]$/) || c === '/' || c === '>' || c === EOF) {
     return afterAttributeName(c)
   } else if (c === '=') {
@@ -164,7 +222,7 @@ function attributeName (c) {
   }
 }
 
-function beforeAttributeValue (c) {
+function beforeAttributeValue(c) {
   if (c.match(/^[\t\n\f ]$/) || c === '/' || c === '>' || c === EOF) {
     return beforeAttributeValue(c)
   } else if (c === '\"') {
@@ -178,7 +236,7 @@ function beforeAttributeValue (c) {
   }
 }
 
-function doubleQuotedAtrributeValue (c) {
+function doubleQuotedAtrributeValue(c) {
   if (c === '\"') {
     if (currentAttribute) {
       currentToken[currentAttribute.name] = currentAttribute.value
@@ -194,7 +252,7 @@ function doubleQuotedAtrributeValue (c) {
   }
 }
 
-function singleQuotedAtrributeValue (c) {
+function singleQuotedAtrributeValue(c) {
   if (c === "\'") {
     if (currentAttribute) {
       currentToken[currentAttribute.name] = currentAttribute.value
@@ -210,7 +268,7 @@ function singleQuotedAtrributeValue (c) {
   }
 }
 
-function afterQuotedAtrributeValue (c) {
+function afterQuotedAtrributeValue(c) {
   if (c.match(/^[\t\n\f ]$/)) {
     return beforeAttributeName
   } else if (c === '/') {
@@ -229,7 +287,7 @@ function afterQuotedAtrributeValue (c) {
   }
 }
 
-function UnquotedAtrributeValue (c) {
+function UnquotedAtrributeValue(c) {
   if (c.match(/^[\t\n\f ]$/)) {
     currentToken[currentAttribute.name] = currentAttribute.value
     return beforeAttributeName
@@ -252,7 +310,7 @@ function UnquotedAtrributeValue (c) {
   }
 }
 
-function selfClosingStartTag (c) {
+function selfClosingStartTag(c) {
   if (c === '>') {
     currentToken.isSelfClosing = true
     emit(currentToken)
@@ -263,7 +321,7 @@ function selfClosingStartTag (c) {
   } else { }
 }
 
-module.exports.parseHTML = async function parseHTML (html) {
+module.exports.parseHTML = async function parseHTML(html) {
   let state = data
   for (const c of html) {
     await new Promise(resolve => {

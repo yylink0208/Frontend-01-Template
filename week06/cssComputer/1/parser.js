@@ -1,10 +1,18 @@
 // 解析标签
+const css = require('css')
 const EOF = Symbol('EOF')
 let currentToken = null
 let currentAttribute = null
 
 const stack = [{ type: 'document', children: [] }]
 let currentTextNode = null
+
+const rules = []
+function addCSSRules(text){
+  const ast = css.parse(text)
+  rules.push(...ast.stylesheet.rules)
+}
+
 
 function emit (token) {
   const top = stack[stack.length - 1]
@@ -19,7 +27,7 @@ function emit (token) {
     element.tagName = token.tagName
 
     for (const p in token) {
-      if (p !== 'type' && p !== 'tagName') {
+    if (p !== 'type' && p !== 'tagName') {
         element.attributes.push({
           name: p,
           value: token[p]
@@ -38,18 +46,23 @@ function emit (token) {
     if (top.tagName !== token.tagName) {
       throw new Error("Tag start end dosen't match!")
     } else {
+      // 遇到style标签时执行添加css规则的操作
+      if(top.tagName === 'style'){
+        addCSSRules(top.children[0].content)
+      }
+
       stack.pop()
     }
     currentTextNode = null
-  } else if (token.type === 'text') {
-    if (currentTextNode === null) {
-      currentTextNode = {
-        type: 'text',
-        content: ''
+  }else if(token.type==='text'){
+    if(currentTextNode===null){
+      currentTextNode={
+        type:"text",
+        content:''
       }
       top.children.push(currentTextNode)
     }
-    currentTextNode.content += token.content
+    currentTextNode.content+=token.content
   }
 }
 
