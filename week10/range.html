@@ -1,0 +1,24 @@
+<div id='a'>123<span style="background: pink;">456789</span>0123456789</div>
+
+<script>
+    let range = new Range()
+    /**
+    切除span标签内的456 以及后面的0123
+    */
+    // range.setStart(document.getElementById('a').childNodes[1].childNodes[0],3)
+    // range.setEnd(document.getElementById('a').childNodes[2],3)
+
+    /**
+    不会切除span标签
+    */
+    // range.setStart(document.getElementById('a').childNodes[1].childNodes[0],0)
+    // range.setEnd(document.getElementById('a').childNodes[2],3)
+
+    /**会将切除span标签
+    */
+    range.setStart(document.getElementById('a').childNodes[0],3)
+    range.setEnd(document.getElementById('a').childNodes[2],3)
+
+
+//    range.extractContents()
+</script>

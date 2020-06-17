@@ -1,0 +1,28 @@
+<div id='a'>
+    <span>1</span>
+    <p>2</p>
+    <a>3</a>
+    <div>4</div>
+</div>
+
+<script>
+    let element = document.getElementById('a')
+
+    function reverseChildren(element){
+        // let children = element.childNodes
+        // let num = children.length-1
+        // let firstNode = element.firstChild
+        // while(num>0){
+        //     let lastNode = element.lastChild
+        //     console.log(firstNode,lastNode)
+        //     element.insertBefore(lastNode,firstNode)
+        //     num--
+        // }
+
+        let i = element.childNodes.length
+        while(i--> 0){
+            element.appendChild(element.childNodes[i])
+        }
+    }
+    reverseChildren(element)
+</script>

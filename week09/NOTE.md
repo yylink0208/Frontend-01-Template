@@ -51,7 +51,7 @@
 
 ### 导航类操作
 - parentNode
-- childNode
+- childNodes
 - firstNode
 - lastNode
 - nextSibling
