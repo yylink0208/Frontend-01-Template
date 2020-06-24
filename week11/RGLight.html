@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .light{
+            height: 100px;
+            width: 100px;
+            background-color: #ddd;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 20px;
+        }
+
+        .red{
+            background: red;
+        }
+
+       .yellow{
+            background: yellow;
+        }
+        .green{
+            background: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="light"></div>
+    <div class="light"></div>
+    <div class="light"></div>
+</body>
+</html>
+<script>
+    function sleep(time){
+        return new Promise(resolve=>{
+            setTimeout(()=>{
+                resolve()
+            },time)
+        })
+    }
+
+    async function RGLight(){
+        while(true){
+            changeLight(0,'green')
+            await sleep(10000)
+            changeLight(1,'yellow')
+            await sleep(2000)
+            changeLight(2,'red')
+            await sleep(5000)
+        }
+    }
+
+    function changeLight(index,color){
+        const list = document.getElementsByClassName('light')
+        Array.prototype.forEach.call(list,(item)=>{
+            item.className = 'light'
+        })
+
+        list[index].classList.add(color)
+    }
+
+    RGLight()
+</script>

@@ -1,0 +1,56 @@
+<style>
+    .keywords {
+        color: blue;
+    }
+
+    .indentifier {
+        color: skyblue;
+    }
+
+    .punctuator {
+        color: purple;
+    }
+</style>
+<pre id="container">
+
+</pre>
+<script>
+    var sourece = `
+    function sleep(time){
+        return new Promise(resolve=>{
+            setTimeout(()=>{
+                resolve()
+            },time)
+        })
+    }
+    `
+    var regexp = /(function|new|return)|([ \t\n\r]+)|([a-zA-z][a-zA-Z0-9]*)|([\(\)\{\}\,\;])/g
+
+    var dictionnary = ['keywords', 'whitespace', 'indentifier', 'punctuator']
+
+    var token = null
+    var lastIndex = 0
+
+    var container = document.getElementById('container')
+    do {
+        lastIndex = regexp.lastIndex
+        token = regexp.exec(sourece)
+        if (!token) break
+
+        let text = document.createElement('span')
+        if (token[0] === '\r') {
+            text.textContent = '\n'
+        } else {
+            text.textContent = token[0]
+        }
+        for (let i = 1; i < 5; i++) {
+            if (token[i]) {
+                console.log(dictionnary[i - 1], token[0])
+                text.classList.add(dictionnary[i - 1])
+            }
+        }
+        container.appendChild(text)
+
+    } while (token)
+
+</script>
