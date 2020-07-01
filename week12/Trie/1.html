@@ -1,0 +1,61 @@
+<script>
+    class Trie {
+        constructor() {
+            this.root = new Map()
+        }
+
+        insert(word) {
+            let node = this.root
+            for (const c of word) {
+                if (!node.has(c)) {
+                    node.set(c, new Map())
+                }
+                node = node.get(c)
+            }
+
+            // 单词计数
+            if (!node.has('$')) {
+                node.set('$', 0)
+            }
+            let num = node.get('$')
+            num++
+            node.set('$', num)
+        }
+
+        most() {
+            let max = 0
+            let maxWord = null
+            let visit = (node, word) => {
+                if (node.has('$') && node.get('$') > max) {
+                    max = node.get('$')
+                    maxWord = word
+                }
+
+                for (const [key, value] of node.entries()) {
+                    if (key !== '$') {
+                        visit(value, word + key)
+                    }
+                }
+            }
+            visit(this.root, '')
+            console.log(maxWord, max)
+        }
+
+        // 通过最小顶堆计算TopK
+    }
+
+    function randomWord(length) {
+        let s = ''
+        for (let index = 0; index < length; index++) {
+            s += String.fromCharCode(Math.random() * 26 + 'a'.charCodeAt())
+        }
+        return s
+    }
+
+    let trie = new Trie()
+
+    for (let index = 0; index < 100000; index++) {
+        trie.insert(randomWord(4))
+    }
+
+</script>
