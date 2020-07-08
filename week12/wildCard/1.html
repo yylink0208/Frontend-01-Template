@@ -35,17 +35,18 @@
                 i++
             }
 
-            let reg = new RegExp(subPattern.replace(/\?/g, '[\\s\\S]'),'g')
+            let reg = new RegExp(subPattern.replace(/\?/g, '[\\s\\S]'), 'g')
             reg.lastIndex = lastIndex
 
-            reg.exec(source)
+            if (!reg.exec(source))
+                return false
 
             lastIndex = reg.lastIndex
         }
 
         // 处理尾
-        for (let j = 0; j <= source.length - lastIndex&&pattern[pattern.length-j]!=='*'; j++) {
-            if(pattern[pattern.length-j]!==source[source.length-1]&&pattern[pattern.length-j]!=='?'){
+        for (let j = 0; j <= source.length - lastIndex && pattern[pattern.length - j] !== '*'; j++) {
+            if (pattern[pattern.length - j] !== source[source.length - 1] && pattern[pattern.length - j] !== '?') {
                 return false
             }
         }

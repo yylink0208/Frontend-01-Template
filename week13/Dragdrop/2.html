@@ -1,0 +1,70 @@
+<div id="container">
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+</div>
+<div id="dragble" style="width: 100px;height: 100px;background-color: pink;display: inline-block;"></div>
+<script>
+    document.addEventListener('selectstart',(e)=>{e.preventDefault()})
+    let dragble = document.getElementById('dragble')
+
+    let baseX = 0
+    let baseY = 0
+    dragble.addEventListener('mousedown', (event) => {
+        let { clientX: startX, clientY: startY } = event
+        let move = (event) => {
+            let range = nearset(event.clientX, event.clientY)
+            range.insertNode(dragble)
+            // let x = baseX + event.clientX - startX
+            // let y = baseY + event.clientY - startY
+            // dragble.style.transform = `translate(${x}px,${y}px)`
+        }
+        let up = (event) => {
+            baseX = baseX + event.clientX - startX
+            baseY = baseY + event.clientY - startY
+            document.removeEventListener('mousemove', move)
+            document.removeEventListener('mouseup', up)
+        }
+
+        document.addEventListener('mousemove', move)
+        document.addEventListener('mouseup', up)
+    })
+
+    let ranges = []
+    let container = document.getElementById('container')
+    for (let i = 0; i < container.childNodes[0].textContent.length; i++) {
+        let range = document.createRange()
+        range.setStart(container.childNodes[0], i)
+        range.setStart(container.childNodes[0], i)
+        ranges.push(range)
+    }
+
+    function nearset(x0, y0) {
+        let nearsetRang = null
+        let distance = Infinity
+
+        for (const range of ranges) {
+            let { x, y } = range.getBoundingClientRect()
+            let d = (x0 - x) ** 2 + (y0 - y) ** 2
+
+            if (d < distance) {
+                nearsetRang = range
+                distance = d
+            }
+        }
+
+        return nearsetRang
+    }
+
+</script>
