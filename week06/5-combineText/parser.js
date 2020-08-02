@@ -19,7 +19,7 @@ function emit (token) {
     element.tagName = token.tagName
 
     for (const p in token) {
-    if (p !== 'type' && p !== 'tagName') {
+      if (p !== 'type' && p !== 'tagName') {
         element.attributes.push({
           name: p,
           value: token[p]
@@ -41,15 +41,15 @@ function emit (token) {
       stack.pop()
     }
     currentTextNode = null
-  }else if(token.type==='text'){
-    if(currentTextNode===null){
-      currentTextNode={
-        type:"text",
-        content:''
+  } else if (token.type === 'text') {
+    if (currentTextNode === null) {
+      currentTextNode = {
+        type: 'text',
+        content: ''
       }
       top.children.push(currentTextNode)
     }
-    currentTextNode.content+=token.content
+    currentTextNode.content += token.content
   }
 }
 
