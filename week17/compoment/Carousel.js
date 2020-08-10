@@ -2,6 +2,7 @@ import { createElement } from './creatElement'
 import { Timeline, Animation } from './animation'
 import { ease } from './cubicBezier.js'
 import { enableGesture } from './gusture'
+import css from './carousel.css'
 
 export class Carousel {
   constructor (config) {
